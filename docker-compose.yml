@@ -1,0 +1,26 @@
+db:
+    image: mysql:latest
+    environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: baleen
+    volumes:
+        - /vagrant/baleen/db/datadir:/var/lib/mysql
+web:
+    image: laravel_php:7.0.8-apache
+    volumes:
+        - /vagrant/baleen/web/html:/var/www/html
+        - /vagrant/baleen/web/000-default.conf:/etc/apache2/sites-available/000-default.conf
+        - /vagrant/baleen/web/apache2.conf:/etc/apache2/apache2.conf
+        - /vagrant/baleen/web/php.ini:/usr/local/etc/php/php.ini
+    links:
+        - db:mysql
+    ports:
+        - 51000:80
+pma:
+    image: phpmyadmin/phpmyadmin:latest
+    links:
+        - db:mysql
+    ports:
+        - 51001:80
+    environment:
+        PMA_HOST: mysql
